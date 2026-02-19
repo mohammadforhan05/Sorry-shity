@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorry Shity</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0608;
+    --cream: #f5ede0;
+    --rose: #c9546a;
+    --gold: #c8a96e;
+    --muted: #6b5c6e;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* Noise texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.4;
+  }
+
+  /* Petals */
+  .petals {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .petal {
+    position: absolute;
+    top: -40px;
+    width: 12px;
+    height: 18px;
+    background: radial-gradient(ellipse at 30% 30%, #e8a0b4, #c9546a88);
+    border-radius: 60% 40% 60% 40% / 60% 40% 60% 40%;
+    opacity: 0;
+    animation: petalFall linear infinite;
+  }
+
+  @keyframes petalFall {
+    0%   { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
+    10%  { opacity: 0.7; }
+    80%  { opacity: 0.5; }
+    100% { transform: translateY(110vh) rotate(720deg) translateX(80px); opacity: 0; }
+  }
+
+  /* Main layout */
+  .page {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr auto 1fr;
+    align-items: center;
+    justify-items: center;
+    padding: 60px 20px;
+  }
+
+  /* Decorative top line */
+  .ornament {
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 1.2s ease forwards;
+  }
+
+  .ornament svg {
+    width: 200px;
+    height: 30px;
+    stroke: var(--gold);
+    fill: none;
+    stroke-width: 0.8;
+  }
+
+  /* Center block */
+  .center {
+    text-align: center;
+    max-width: 780px;
+  }
+
+  .label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0;
+    animation: fadeUp 1s ease 0.4s forwards;
+    margin-bottom: 24px;
+  }
+
+  .title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(5rem, 14vw, 11rem);
+    font-weight: 900;
+    font-style: italic;
+    line-height: 0.88;
+    letter-spacing: -0.02em;
+    color: var(--cream);
+    opacity: 0;
+    animation: fadeUp 1.2s ease 0.6s forwards;
+    position: relative;
+  }
+
+  .title .sorry {
+    display: block;
+    background: linear-gradient(135deg, var(--cream) 30%, var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .title .shity {
+    display: block;
+    color: var(--rose);
+    -webkit-text-fill-color: var(--rose);
+    text-shadow: 0 0 80px #c9546a55;
+    margin-top: -8px;
+  }
+
+  .divider {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    margin: 36px auto;
+    opacity: 0;
+    animation: fadeUp 1s ease 1s forwards;
+  }
+
+  .message {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.85;
+    color: #d4c4c8;
+    max-width: 540px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.2s forwards;
+  }
+
+  .message em {
+    color: var(--rose);
+    font-style: normal;
+  }
+
+  /* Heart */
+  .heart-wrap {
+    margin-top: 48px;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.5s forwards;
+  }
+
+  .heart {
+    display: inline-block;
+    font-size: 2.2rem;
+    animation: heartbeat 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px #c9546a99);
+  }
+
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.18); }
+  }
+
+  /* Bottom ornament */
+  .bottom-ornament {
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 1.8s forwards;
+  }
+
+  /* Glow circles */
+  .glow {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+    filter: blur(80px);
+  }
+  .glow-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, #c9546a22, transparent 70%);
+    top: -100px; right: -100px;
+    animation: drift1 12s ease-in-out infinite alternate;
+  }
+  .glow-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, #c8a96e18, transparent 70%);
+    bottom: -80px; left: -80px;
+    animation: drift2 15s ease-in-out infinite alternate;
+  }
+
+  @keyframes drift1 { to { transform: translate(-60px, 80px); } }
+  @keyframes drift2 { to { transform: translate(60px, -60px); } }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Scan line */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--rose), transparent);
+    animation: scanline 8s linear 2s infinite;
+    z-index: 50;
+    opacity: 0.3;
+  }
+  @keyframes scanline { to { top: 110%; } }
+</style>
+</head>
+<body>
+
+<div class="glow glow-1"></div>
+<div class="glow glow-2"></div>
+
+<!-- Falling petals -->
+<div class="petals" id="petals"></div>
+
+<div class="page">
+
+  <div class="ornament">
+    <svg viewBox="0 0 200 30" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0" y1="15" x2="80" y2="15"/>
+      <circle cx="100" cy="15" r="4"/>
+      <circle cx="100" cy="15" r="8" opacity="0.4"/>
+      <line x1="120" y1="15" x2="200" y2="15"/>
+      <path d="M85 15 Q90 8 95 15 Q90 22 85 15" fill="#c8a96e" opacity="0.6"/>
+      <path d="M105 15 Q110 8 115 15 Q110 22 105 15" fill="#c8a96e" opacity="0.6"/>
+    </svg>
+  </div>
+
+  <div class="center">
+    <p class="label">— a heartfelt confession —</p>
+
+    <h1 class="title">
+      <span class="sorry">Sorry</span>
+      <span class="shity">Shity</span>
+    </h1>
+
+    <div class="divider"></div>
+
+    <p class="message">
+      হে মহামান্য বন্ধু, এই অধমের ক্ষুদ্র ভুল মাফ করুন।<br>
+      আপনার কাছে <em>অনেকগুলো (এত্তগুলা)</em> সরি!<br><br>
+      দয়া করে একটা আমাকেও<br>
+      <em>এত্তগুলা মাফ করেন!</em><br><br>
+      <em>Truly, deeply — sorry.</em>
+    </p>
+
+    <div class="heart-wrap">
+      <span class="heart">🌹</span>
+    </div>
+  </div>
+
+  <div class="bottom-ornament">
+    <svg viewBox="0 0 200 30" xmlns="http://www.w3.org/2000/svg" width="200" height="30" style="stroke:#c8a96e;fill:none;stroke-width:0.8">
+      <line x1="0" y1="15" x2="80" y2="15"/>
+      <circle cx="100" cy="15" r="4"/>
+      <circle cx="100" cy="15" r="8" opacity="0.4"/>
+      <line x1="120" y1="15" x2="200" y2="15"/>
+    </svg>
+  </div>
+
+</div>
+
+<script>
+  // Generate petals
+  const container = document.getElementById('petals');
+  for (let i = 0; i < 22; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.transform = `scale(${0.6 + Math.random() * 0.8})`;
+    p.style.opacity = '0';
+    container.appendChild(p);
+  }
+</script>
+</body>
+</html>
